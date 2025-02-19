@@ -1,1 +1,1 @@
-This is new improved calculator with Faker library
+This is my new improved calculator with Faker library
