@@ -1,1 +1,0 @@
-This is my part2 of my calculator.

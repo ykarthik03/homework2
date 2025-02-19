@@ -1,25 +1,16 @@
-"""Tests for the basic arithmetic operations."""
-
+# tests/test_operations.py
 import pytest
-from app.operations import add, subtract, multiply, divide
+from decimal import Decimal
+from calculator.calculation import Calculation
+from calculator.operations import add, subtract, multiply, divide
 
-def test_add():
-    """Test the addition operation."""
-    assert add(2, 3) == 5
-
-def test_subtract():
-    """Test the subtraction operation."""
-    assert subtract(5, 3) == 2
-
-def test_multiply():
-    """Test the multiplication operation."""
-    assert multiply(2, 3) == 6
-
-def test_divide():
-    """Test the division operation."""
-    assert divide(6, 3) == 2
+def test_operation(a, b, operation, expected):
+    """Test arithmetic operations."""
+    calculation = Calculation.create(a, b, operation)
+    assert calculation.perform() == expected, f"{operation.__name__} operation failed"
 
 def test_divide_by_zero():
-    """Test division by zero raises a ValueError."""
-    with pytest.raises(ValueError):
-        divide(6,0)
+    """Test division by zero."""
+    with pytest.raises(ValueError, match="Cannot divide by zero"):
+        calculation = Calculation(Decimal('10'), Decimal('0'), divide)
+        calculation.perform()
