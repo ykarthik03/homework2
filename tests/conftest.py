@@ -37,8 +37,7 @@ def pytest_addoption(parser):
     parser.addoption("--num_records", action="store", default=5, type=int, help="Number of test records to generate")
 
 def pytest_generate_tests(metafunc):
-    """Generate tests dynamically based on command-line options."""
-    if {"a", "b", "expected"}.intersection(set(metafunc.fixturenames)):
+    if {"a", "b", "expected"}.issubset(set(metafunc.fixturenames)):
         num_records = metafunc.config.getoption("num_records")
         parameters = list(generate_test_data(num_records))
         modified_parameters = [(a, b, op_name if 'operation_name' in metafunc.fixturenames else op_func, expected) for a, b, op_name, op_func, expected in parameters]
