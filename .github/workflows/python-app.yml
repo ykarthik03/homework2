@@ -2,9 +2,9 @@ name: Python Application CI
 
 on:
   push:
-    branches: [ main, logging ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, logging ]
+    branches: [ main ]
 
 jobs:
   build:
