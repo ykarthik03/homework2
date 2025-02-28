@@ -1,1 +1,1 @@
-This branch is added to create commands for my Assignment 4.
+This branch is added to add new functionalities to my previous woks: Logging and Envionment Variables.
