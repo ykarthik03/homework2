@@ -15,3 +15,7 @@ pytest-cov==6.0.0
 pytest-pylint==0.21.0
 tomlkit==0.13.2
 tzdata==2025.1
+python-dotenv==1.0.0
+pylint==3.3.4
+mypy==0.971
+coverage==7.6.10
