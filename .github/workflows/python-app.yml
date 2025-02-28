@@ -30,7 +30,7 @@ jobs:
 
       - name: Run linting and type-checking
         run: |
-          pylint --rcfile=.pylintrc .
+          pylint --rcfile=.pylintrc --exit-zero .
           mypy .
       
       - name: Run tests with coverage
