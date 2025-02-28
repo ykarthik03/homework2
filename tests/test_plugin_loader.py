@@ -14,4 +14,4 @@ def test_load_plugins_empty(monkeypatch):
     # Monkeypatch pkgutil.iter_modules to return an empty list
     monkeypatch.setattr(pkgutil, "iter_modules", lambda paths: [])
     plugins = load_plugins("commands")
-    assert plugins == {}
+    assert not plugins

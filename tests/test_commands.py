@@ -1,11 +1,16 @@
+# tests/test_commands.py
+# pylint: disable=duplicate-code
 import pytest
+
+import plugin_loader
 from commands.add_command import AddCommand
-from commands.subtract_command import SubtractCommand
-from commands.multiply_command import MultiplyCommand
 from commands.divide_command import DivideCommand
 from commands.menu_command import MenuCommand
-import plugin_loader 
+from commands.multiply_command import MultiplyCommand
+from commands.subtract_command import SubtractCommand
 from commands.base_command import BaseCommand
+
+from tests.helpers import DummyCommand
 
 
 # Extend the tests for AddCommand with error cases
@@ -20,7 +25,8 @@ def test_add_command_cases(capsys, args, expected):
     captured = capsys.readouterr().out.strip()
     assert captured == expected
 
-# Similarly, extend tests for SubtractCommand
+
+# Extend tests for SubtractCommand
 @pytest.mark.parametrize("args, expected", [
     (["10", "3"], "Result of subtract 10 and 3 is equal to 7"),
     (["10", "b"], "Invalid input. Please provide valid numbers. Received: ['10', 'b']"),
@@ -32,7 +38,8 @@ def test_subtract_command_cases(capsys, args, expected):
     captured = capsys.readouterr().out.strip()
     assert captured == expected
 
-# And for MultiplyCommand:
+
+# Extend tests for MultiplyCommand
 @pytest.mark.parametrize("args, expected", [
     (["4", "5"], "Result of multiply 4 and 5 is equal to 20"),
     (["x", "5"], "Invalid input. Please provide valid numbers. Received: ['x', '5']"),
@@ -44,7 +51,8 @@ def test_multiply_command_cases(capsys, args, expected):
     captured = capsys.readouterr().out.strip()
     assert captured == expected
 
-# And for DivideCommand:
+
+# Extend tests for DivideCommand
 @pytest.mark.parametrize("args, expected", [
     (["20", "4"], "Result of divide 20 and 4 is equal to 5"),
     (["20", "y"], "Invalid input. Please provide valid numbers. Received: ['20', 'y']"),
@@ -57,11 +65,12 @@ def test_divide_command_cases(capsys, args, expected):
     captured = capsys.readouterr().out.strip()
     assert captured == expected
 
+
 def test_menu_command(monkeypatch, capsys):
     def fake_load_plugins(_):
         return {"add": None, "subtract": None, "multiply": None, "divide": None, "menu": None}
     monkeypatch.setattr(plugin_loader, 'load_plugins', fake_load_plugins)
-    
+
     cmd = MenuCommand()
     cmd.execute()
     output = capsys.readouterr().out
@@ -69,11 +78,6 @@ def test_menu_command(monkeypatch, capsys):
     for command in ["add", "subtract", "multiply", "divide", "menu"]:
         assert command in output
 
-class DummyCommand(BaseCommand):
-    def name(self):
-        return "dummy"
-    def execute(self, *args):
-        print("Dummy executed with args:", args)
 
 def test_dummy_command(capsys):
     cmd = DummyCommand()
