@@ -1,6 +1,6 @@
-# calculator/calculations.py
+# calculator/calculations.py 
 from decimal import Decimal
-from typing import List
+from typing import List, Optional
 from calculator.calculation import Calculation
 
 class Calculations:
@@ -24,7 +24,7 @@ class Calculations:
         cls.history.clear()
 
     @classmethod
-    def get_latest(cls) -> Calculation:
+    def get_latest(cls) -> Optional[Calculation]:
         """Get the latest calculation. Returns None if there's no history."""
         if cls.history:
             return cls.history[-1]
