@@ -43,3 +43,6 @@ logs/
 # Ignore temporary files
 *.tmp
 *.temp
+
+# Ignore mypy files
+mypy.ini
