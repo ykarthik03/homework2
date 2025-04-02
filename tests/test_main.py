@@ -1,19 +1,64 @@
-# tests/test_main.py
+import os
 import pytest
-from main import calculate_and_print
+from unittest.mock import patch, MagicMock
+from main import generate_qr_code
 
-@pytest.mark.parametrize("a_string, b_string, operation_string, expected_string", [
-    ("5", "3", 'add', "The result of 5 add 3 is equal to 8"),
-    ("10", "2", 'subtract', "The result of 10 subtract 2 is equal to 8"),
-    ("4", "5", 'multiply', "The result of 4 multiply 5 is equal to 20"),
-    ("20", "4", 'divide', "The result of 20 divide 4 is equal to 5"),
-    ("1", "0", 'divide', "An error occurred: Cannot divide by zero"),
-    ("9", "3", 'unknown', "Unknown operation: unknown"),
-    ("a", "3", 'add', "Invalid number input: a or 3 is not a valid number."),
-    ("5", "b", 'subtract', "Invalid number input: 5 or b is not a valid number.")
-])
-def test_calculate_and_print(a_string, b_string, operation_string, expected_string, capsys):
-    """Test the calculate_and_print function."""
-    calculate_and_print(a_string, b_string, operation_string)
-    captured = capsys.readouterr()
-    assert captured.out.strip() == expected_string
+
+def test_default_qr_generation():
+    with patch("main.os.makedirs"), patch(
+        "main.qrcode.QRCode.make_image"
+    ) as mock_make_image, patch("main.logging.info") as mock_logging:
+
+        result = generate_qr_code()
+        assert result == 0
+        mock_logging.assert_called_with(
+            "QR code generated successfully at qr_codes/github_qr.png"
+        )
+
+
+def test_custom_environment_variables():
+    with patch.dict(
+        os.environ,
+        {
+            "QR_DATA_URL": "https://google.com",
+            "QR_CODE_DIR": "custom_dir",
+            "QR_CODE_FILENAME": "custom.png",
+            "FILL_COLOR": "blue",
+            "BACK_COLOR": "white",
+        },
+    ), patch("main.os.makedirs"), patch("main.qrcode.QRCode.make_image"):
+        result = generate_qr_code()
+        assert result == 0
+
+
+def test_file_creation(tmpdir):
+    test_dir = tmpdir.mkdir("test_qr")
+    with patch.dict(os.environ, {"QR_CODE_DIR": str(test_dir)}):
+        result = generate_qr_code()
+        assert result == 0
+        assert len(test_dir.listdir()) == 1
+
+
+def test_error_handling():
+    with patch(
+        "main.qrcode.QRCode.make_image", side_effect=Exception("Fake Error")
+    ), patch("main.logging.error") as mock_logging:
+        result = generate_qr_code()
+        assert result == 1
+        # Check if exc_info=True is passed
+        mock_logging.assert_called_with(
+            "Error generating QR code: Fake Error", exc_info=True  # Add this assertion
+        )
+
+
+def test_directory_creation_failure():
+    with patch("main.os.makedirs", side_effect=PermissionError("No permission")), patch(
+        "main.logging.error"
+    ) as mock_logging:
+        result = generate_qr_code()
+        assert result == 1
+        # Check if exc_info=True is passed
+        mock_logging.assert_called_with(
+            "Error generating QR code: No permission",
+            exc_info=True,
+        )
